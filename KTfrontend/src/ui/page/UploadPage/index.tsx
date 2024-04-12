@@ -33,7 +33,7 @@ export default function UploadVideoPage() {
     const [uploading, setUploading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add type declaration for selectedFile
-    const [fileDetails, setFileDetails] = useState<string | null>(null);
+    const [fileDetails, setFileDetails] = useState<string>('');
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -58,6 +58,7 @@ export default function UploadVideoPage() {
         try {
             const data = await s3.upload(params).promise();
             console.log('Upload successful:', data.Location);
+            setFileDetails('');
         } catch (err) {
             console.error('Error uploading file:', err);
         }
@@ -96,7 +97,7 @@ export default function UploadVideoPage() {
             document.body.removeEventListener('dragleave', handleDragLeave);
             document.body.removeEventListener('drop', handleDrop);
         };
-    }, [selectedFile]);
+    }, []);
 
     return (
         <Box
@@ -113,15 +114,13 @@ export default function UploadVideoPage() {
                 <Typography variant="h4" gutterBottom textAlign="center">
                     Upload File
                 </Typography>
-                <input type="file" onChange={handleFileInput} />
-
-
                 <Box
                     style={{
                         cursor: 'pointer',
                         border: `2px dashed ${isDragging ? 'blue' : 'gray'}`,
                         padding: '20px',
                         borderRadius: '10px',
+                        display: selectedFile ? 'none' : 'block', // Hide when file is selected
                     }}
                 >
                     <input
@@ -133,8 +132,10 @@ export default function UploadVideoPage() {
                     <Typography variant="body1" style={{ color: isDragging ? 'blue' : 'inherit' }}>
                         {isDragging ? 'Drop your video file / picture here' : 'Drag & drop video file  / picture here, or click to select'}
                     </Typography>
-                    {fileDetails && <Typography variant="body2">{fileDetails}</Typography>}
                 </Box>
+                {selectedFile && (
+                    <Typography variant="body2">{fileDetails}</Typography>
+                )}
                 <Button
                     component="label"
                     role={undefined}
@@ -142,6 +143,7 @@ export default function UploadVideoPage() {
                     tabIndex={-1}
                     startIcon={<CloudUploadIcon />}
                     onClick={() => handleUpload(selectedFile)}
+                    disabled={!selectedFile}
                 >
                     Upload file
                     {/* <VisuallyHiddenInput type="file" /> */}
