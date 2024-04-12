@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AWS from 'aws-sdk';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 const S3_BUCKET = 'proecttesting';
 const REGION = 'ap-southeast-1';
@@ -14,11 +16,24 @@ const s3 = new AWS.S3({
     region: REGION,
 });
 
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
+
 
 export default function UploadVideoPage() {
     const [uploading, setUploading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add type declaration for selectedFile
+    const [fileDetails, setFileDetails] = useState<string | null>(null);
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -48,20 +63,24 @@ export default function UploadVideoPage() {
         }
     };
     useEffect(() => {
-        const handleDragEnter = (e) => {
+        const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setIsDragging(true);
         };
 
-        const handleDragLeave = (e) => {
+        const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setIsDragging(false);
         };
 
-        const handleDrop = (e) => {
+
+
+        const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setIsDragging(false);
-            handleUpload(selectedFile);
+            const file = e.dataTransfer.files[0];
+            setSelectedFile(file);
+            setFileDetails(`File Name: ${file.name}, Size: ${file.size} bytes, Type: ${file.type}`);
         };
 
         // Add event listeners to handle drag and drop on the entire document
@@ -95,8 +114,7 @@ export default function UploadVideoPage() {
                     Upload File
                 </Typography>
                 <input type="file" onChange={handleFileInput} />
-                <button onClick={() => handleUpload(selectedFile)}>
-                    Upload to S3</button>
+
 
                 <Box
                     style={{
@@ -115,7 +133,19 @@ export default function UploadVideoPage() {
                     <Typography variant="body1" style={{ color: isDragging ? 'blue' : 'inherit' }}>
                         {isDragging ? 'Drop your video file / picture here' : 'Drag & drop video file  / picture here, or click to select'}
                     </Typography>
+                    {fileDetails && <Typography variant="body2">{fileDetails}</Typography>}
                 </Box>
+                <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon />}
+                    onClick={() => handleUpload(selectedFile)}
+                >
+                    Upload file
+                    {/* <VisuallyHiddenInput type="file" /> */}
+                </Button>
                 <Box>
                     {/* Your additional content */}
                 </Box>
