@@ -23,15 +23,19 @@ export default function UploadVideoPage() {
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setSelectedFile(e.target.files[0]);
+            handleUpload(e.target.files[0]);
         }
     };
 
     const handleUpload = async (file: File | null) => {
         if (!file) return;
 
+        const folderName = 'new_folder'; // Specify the folder name , format : if use firebase for login , userID+useName ? 001LucasPun
+        const fileName = file.name;
+
         const params = {
             Bucket: S3_BUCKET,
-            Key: file.name,
+            Key: `${folderName}/${fileName}`,
             Body: file,
             ACL: 'public-read'
         };
@@ -73,7 +77,7 @@ export default function UploadVideoPage() {
             document.body.removeEventListener('dragleave', handleDragLeave);
             document.body.removeEventListener('drop', handleDrop);
         };
-    }, []);
+    }, [selectedFile]);
 
     return (
         <Box
@@ -91,7 +95,8 @@ export default function UploadVideoPage() {
                     Upload File
                 </Typography>
                 <input type="file" onChange={handleFileInput} />
-                <button onClick={() => handleUpload(selectedFile)}>Upload to S3</button>
+                <button onClick={() => handleUpload(selectedFile)}>
+                    Upload to S3</button>
 
                 <Box
                     style={{
