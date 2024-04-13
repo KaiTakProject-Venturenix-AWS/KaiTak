@@ -172,10 +172,8 @@ export default function StableDiffusionPage() {
           width: "100%",
           gridTemplateColumns: "repeat(2, 1fr)", // Two columns
           gap: 1, // Gap between items
-          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center", // Center the content vertically
-          // minHeight: '100vh', // Set minimum height to 100% of the viewport height
         }}
       >
         {images.map((image) => (
