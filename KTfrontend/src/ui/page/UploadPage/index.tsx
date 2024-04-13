@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
+import React, {useState, useEffect} from 'react';
+import {Box, CircularProgress, Container, Divider, Typography} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AWS from 'aws-sdk';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import TopNavBar from "../../compoent/TopNavBar.tsx";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 const S3_BUCKET = 'proecttesting';
 const REGION = 'ap-southeast-1';
@@ -34,6 +37,7 @@ export default function UploadVideoPage() {
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // Add type declaration for selectedFile
     const [fileDetails, setFileDetails] = useState<string>('');
+    const [agreeTerms, setAgreeTerms] = useState(false);
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -75,7 +79,6 @@ export default function UploadVideoPage() {
         };
 
 
-
         const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setIsDragging(false);
@@ -100,59 +103,112 @@ export default function UploadVideoPage() {
     }, []);
 
     return (
-        <Box
-            style={{
-                height: '80vh',
-                width: '80vw',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: isDragging ? 'lightblue' : 'white',
-            }}
-        >
-            <Container maxWidth="sm">
-                <Typography variant="h4" gutterBottom textAlign="center">
-                    Upload File
-                </Typography>
-                <Box
-                    style={{
-                        cursor: 'pointer',
-                        border: `2px dashed ${isDragging ? 'blue' : 'gray'}`,
-                        padding: '20px',
-                        borderRadius: '10px',
-                        display: selectedFile ? 'none' : 'block', // Hide when file is selected
-                    }}
-                >
-                    <input
-                        type="file"
-                        style={{ display: 'none' }}
-                        onChange={handleFileInput}
-                    />
-                    <CloudUploadIcon fontSize='large' color='disabled' />
-                    <Typography variant="body1" style={{ color: isDragging ? 'blue' : 'inherit' }}>
-                        {isDragging ? 'Drop your video file / picture here' : 'Drag & drop video file  / picture here, or click to select'}
+        <>
+            <TopNavBar/>
+            <Box
+                style={{
+                    height: '80vh',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center', // 新增這一行
+                    backgroundColor: isDragging ? 'lightblue' : 'white',
+                }}
+            >
+                <Container maxWidth="sm">
+                    <Typography variant="h4" gutterBottom textAlign="center">
+                        Submit a Video
                     </Typography>
-                </Box>
-                {selectedFile && (
-                    <Typography variant="body2">{fileDetails}</Typography>
-                )}
-                <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
-                    onClick={() => handleUpload(selectedFile)}
-                    disabled={!selectedFile}
-                >
-                    Upload file
-                    {/* <VisuallyHiddenInput type="file" /> */}
-                </Button>
-                <Box>
-                    {/* Your additional content */}
-                </Box>
-                {uploading && <CircularProgress style={{ marginTop: '20px' }} />}
-            </Container>
-        </Box>
+
+                    <Typography variant="body1" gutterBottom textAlign="center">
+                        Submit your video for evaluation
+                    </Typography>
+
+                    <Divider sx={{ my: 2 }} />
+
+                    <Typography variant="h4" gutterBottom textAlign="center">
+                        Upload File
+                    </Typography>
+
+                    <Box
+                        style={{
+                            cursor: 'pointer',
+                            border: `2px dashed ${isDragging ? 'blue' : 'gray'}`,
+                            padding: '20px',
+                            borderRadius: '10px',
+                            position: 'relative', // Add position relative to the container
+                            overflow: 'hidden', // Hide overflow content
+                        }}
+                        onClick={() => {
+                            const fileInput = document.getElementById('file-input');
+                            if (fileInput) {
+                                fileInput.click(); // Trigger file input click event
+                            }
+                        }}
+                    >
+                        <input
+                            id="file-input"
+                            type="file"
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                opacity: 0, // Make input element transparent
+                                cursor: 'pointer', // Show pointer cursor when hovering
+                            }}
+                            onChange={handleFileInput}
+                        />
+                        <CloudUploadIcon fontSize='large' color='disabled'/>
+                        <Typography variant="body1" style={{color: isDragging ? 'blue' : 'inherit'}}>
+                            {isDragging ? 'Drop your video file / picture here' : 'Drag & drop video file  / picture here, or click to select'}
+                        </Typography>
+                    </Box>
+                    {selectedFile && (
+                        <Typography variant="body2">{fileDetails}</Typography>
+                    )}
+
+                    <Box>
+                        {/* Your additional content */}
+                    </Box>
+
+                    <Typography variant="body1" gutterBottom>
+                        Make sure your video is no longer than 10 minutes.
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        Make sure you own the right to use all music & images on the video.
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                        Make sure your video does not contain inappropriate language, images, or sounds.
+                    </Typography>
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={agreeTerms}
+                                onChange={(e) => setAgreeTerms(e.target.checked)}
+                                color="primary"
+                            />
+                        }
+                        label="Do You Agree to the Terms Above?"
+                    />
+                    <Button
+                        component="label"
+                        role={undefined}
+                        variant="contained"
+                        tabIndex={-1}
+                        startIcon={<CloudUploadIcon/>}
+                        onClick={() => handleUpload(selectedFile)}
+                        disabled={!selectedFile}
+                    >
+                        Upload file
+                        {/* <VisuallyHiddenInput type="file" /> */}
+                    </Button>
+                    {uploading && <CircularProgress style={{marginTop: '20px'}}/>}
+                </Container>
+            </Box>
+        </>
     );
 }
