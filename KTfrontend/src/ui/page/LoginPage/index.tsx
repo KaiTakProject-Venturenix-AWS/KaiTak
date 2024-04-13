@@ -11,8 +11,9 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import logo from './Venturenix_2024.png';
+import video from './dummy_video.mp4';
 import {useNavigate} from "react-router-dom";
+import logo from '../LoginPage/Venturenix_2024.png'
 
 function Copyright(props: any) {
     return (
@@ -56,14 +57,18 @@ export default function LoginPage() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage: `url(${logo})`,
-                        backgroundRepeat: 'no-repeat',
+                        // backgroundImage: `url(${logo})`,
+                        // backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
                         backgroundSize: '80%',
                         backgroundPosition: 'center',
                     }}
-                />
+                >
+                    <video autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }}>
+                        <source src={video} type="video/mp4" /> {/* Replace YOUR_VIDEO_URL with the actual URL of your MP4 video */}
+                    </video>
+                </Grid>
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <Box
                         sx={{
@@ -74,9 +79,12 @@ export default function LoginPage() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <Typography component="h1" variant="h5" sx={{ textAlign: 'center', fontWeight: 'bold', marginTop: 1, color: 'primary.main' }}>
+                            啟德AI 繪畫- 我夢中的啟德
+                        </Typography>
 
-                        </Avatar>
+                        <img src={logo} alt="Your Image" style={{ width: '500px', height: '150px', marginBottom: '30px' }} />
+
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
