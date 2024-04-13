@@ -111,7 +111,7 @@ export default function StableDiffusionPage() {
             <Box
                 display="flex"
                 alignItems="center"
-                height="100vh"
+                height="90vh"
                 sx={{backgroundColor: "#202020"}}
             >
                 <Box>

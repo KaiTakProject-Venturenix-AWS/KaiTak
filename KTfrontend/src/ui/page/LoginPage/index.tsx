@@ -38,6 +38,10 @@ export default function LoginPage() {
         navigate('/signup');
     };
 
+    const handleSignInClick = () => {
+        navigate('/gen');
+    };
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -83,11 +87,9 @@ export default function LoginPage() {
                             啟德AI 繪畫- 我夢中的啟德
                         </Typography>
 
-                        <img src={logo} alt="Your Image" style={{ width: '500px', height: '150px', marginBottom: '30px' }} />
+                        <img src={logo} alt="Your Image" style={{ width: '560px', height: '120px', marginBottom: '30px' }} />
 
-                        <Typography component="h1" variant="h5">
-                            Sign in
-                        </Typography>
+
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
@@ -118,6 +120,7 @@ export default function LoginPage() {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                onClick={handleSignInClick}
                             >
                                 Sign In
                             </Button>
